@@ -1,3 +1,9 @@
+from tkinter import *
+import os
+import ctypes
+import webbrowser
+import easygui
+import json
 from tinydb import TinyDB, Query
 import os
 db = TinyDB('db.json')
@@ -6,13 +12,6 @@ actual_directory = "/."
 query = Query()
 def cls():
     os.system("cls")
-
-##########################################################################################
-#                                          FILE                                          #
-##########################################################################################
-def mk_file(file_name=str, links=list, key=str, size=str, description=str):
-    db.insert({'directory': actual_directory, "type": "file", "item_name": file_name, "links": links, "key": key, "size": size, "description": description})
-##########################################################################################
 
 
 
@@ -38,12 +37,7 @@ def openWebsite():
     webbrowser.open("https://github.com/MattyPew/DCloud-Client/tree/main")
 
 
-from tkinter import *
-import os
-import ctypes
-import webbrowser
-import easygui
-import json
+# TKINTER CODE
 
 # Increase Dots Per inch so it looks sharper
 ctypes.windll.shcore.SetProcessDpiAwareness(True)
@@ -108,7 +102,7 @@ def TKgoBack(event=None):
     else:
         print("Already on top!")
 
-################################################### NOT DONE BELOW #########################################################################
+
 def TKnewFolderOpen_popup():
     global top
     top = Toplevel(root)
