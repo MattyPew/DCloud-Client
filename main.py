@@ -1,5 +1,6 @@
-import config
-if config.url == "":
+import linecache
+config_webhook = linecache.getline("webhook.txt",1).rstrip("\n")
+if config_webhook == "":
     print("You need to add webhook url into config.py!")
     exit()
 
@@ -263,7 +264,7 @@ def upload():
     os.chdir(upload_temp_chunks_directory)
     while index < len(files_for_upload):
         print(index)
-        webhook = DiscordWebhook(url=config.url)
+        webhook = DiscordWebhook(url=config_webhook)
         with open(files_for_upload[index], "rb") as f:
             webhook.add_file(file=f.read(), filename=files_for_upload[index])
             f.close()
