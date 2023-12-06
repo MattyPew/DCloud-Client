@@ -1,7 +1,30 @@
+from discord_webhook import DiscordEmbed, DiscordWebhook
+import random
+import string
+from easygui import msgbox
 import linecache
+import os
+default_direcory = os.getcwd()
+if not os.path.exists((default_direcory+"\\webhook.txt")):
+    with open("webhook.txt", "w") as f:
+        f.write("")
+        f.close()
+
 config_webhook = linecache.getline("webhook.txt",1).rstrip("\n")
 if config_webhook == "":
-    print("You need to add webhook url into config.py!")
+    output = msgbox("Put your discord webhook into webhook.txt!", "Error!", "Close client.")
+    print("User pressed  : " + output)
+    exit()
+test_webhook = DiscordWebhook(url=config_webhook)
+
+rand_send = str(''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits + string.punctuation, k=64)))
+embed = DiscordEmbed(title="Webhook test string:", description=rand_send)
+test_webhook.add_embed(embed)
+try:
+    response = test_webhook.execute()
+except:
+    output = msgbox("Invalid webhook url!", "Error!", "Close client.")
+    print("User pressed  : " + output)
     exit()
 
 from tkinter import *
@@ -24,7 +47,6 @@ from os.path import isfile, join
 from win10toast import ToastNotifier
 from filesplit.merge import Merge
 toast = ToastNotifier()
-default_direcory = os.getcwd()
 db = TinyDB('db.json')
 global actual_directory
 actual_directory = "/."
@@ -219,7 +241,7 @@ def upload():
     duration = 0,
     icon_path = "icon.ico",
     threaded = True,
-)
+    )
 
 
     upload_file_description = DescriptionText.get()
@@ -241,11 +263,27 @@ def upload():
     # Making encrypted copy
     fernet = Fernet(bytes(upload_file_key,'utf-8'))
 
+
     with open(upload_file, 'rb') as f:
         original = f.read()
 
     encrypted = fernet.encrypt(original)
-    encrypted_location = upload_temp_directory+"\\"+upload_file_name
+    name = str(upload_file_name.replace(" ","_"))
+    name = name.replace("ě","e")
+    name = name.replace("š", "s")
+    name = name.replace("č", "c")
+    name = name.replace("ř", "r")
+    name = name.replace("ž","z")
+    name = name.replace("ý", "y")
+    name = name.replace("á","a")
+    name = name.replace("í","i")
+    name = name.replace("é","e")
+    name = name.replace("ú","u")
+    name = name.replace("ů","u")
+
+
+
+    encrypted_location = upload_temp_directory+"\\"+name
 
     with open(encrypted_location, 'wb') as f_enc:
         f_enc.write(encrypted)
@@ -293,7 +331,8 @@ def upload():
     duration = 0,
     icon_path = "icon.ico",
     threaded = True,
-)
+    )
+    easygui.msgbox("I sucessfully uploaded your file, you can close DCloud Client now! ", "Upload success!", "Thank youuu <3")
     
 
 
@@ -371,7 +410,6 @@ def download():
         with open(f_name, 'wb') as f:
             f.write(f_url.content)
             f.close()
-
     merge = Merge(download_temp_chunks_directory, download_temp_directory, metadata_file_download["item_name"])
     merge.merge(True, False)
     fernet = Fernet(bytes(metadata_file_download["key"], 'UTF-8'))
@@ -398,6 +436,7 @@ def download():
         icon_path = "icon.ico",
         threaded = True,
         )
+        easygui.msgbox("I sucessfully downloaded your file, you can close DCloud Client now! ", "Download success!", "Thank youuu <3")
     else:
         print("Hashes dont match!")
         print("Cloud hash: "+str(metadata_file_download["hash"]))
@@ -409,6 +448,7 @@ def download():
         icon_path = "icon.ico",
         threaded = True,
         )
+        easygui.msgbox("File is downloaded but hashes didnt matched (be carrefull!), you can close DCloud Client now! ", "Download success!", "Thank youuu <3")
     os.chdir(default_direcory)
     if os.path.exists(download_temp_directory) == True:
         shutil.rmtree(download_temp_directory)
